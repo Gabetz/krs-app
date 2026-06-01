@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from sqlalchemy import text
-# from weasyprint import HTML
+from weasyprint import HTML
 from database import get_db
 from models.models import User, Kelas
 

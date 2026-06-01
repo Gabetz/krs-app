@@ -1,0 +1,76 @@
+<html>
+<head>
+    <style>
+        /* Menggunakan font sistem yang tersedia di Windows/Linux yang mirip gaya JJK */
+        @page { size: A4; margin: 20mm; }
+        
+        body {
+            /* Font 'Georgia' atau 'Times New Roman' memberikan kesan serif yang tegas dan tajam */
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background-color: #0d0d0d; 
+            color: #f2f2f2;
+            padding: 20px;
+        }
+        
+        h1 {
+            /* Font judul dibuat lebih tebal dan tajam */
+            font-family: 'Impact', sans-serif; 
+            color: #bf0000; 
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 3px solid #bf0000;
+            padding-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #1a1a1a;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #bf0000;
+            color: white;
+            padding: 12px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        td {
+            border: 1px solid #444;
+            padding: 10px;
+            text-align: left;
+        }
+        
+        tr:nth-child(even) { background-color: #262626; }
+        
+        /* Tambahan aksen agar terasa seperti dokumen dari Jujutsu High */
+        p {
+            font-style: italic;
+            border-left: 3px solid #bf0000;
+            padding-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Kartu Rencana Studi (KRS)</h1>
+    <p>Nama: {{ mahasiswa.nama_lengkap }}</p>
+    <p>NIM: {{ mahasiswa.nim }}</p>
+    <table>
+        <tr>
+            <th>Kode</th>
+            <th>Mata Kuliah</th>
+            <th>SKS</th>
+        </tr>
+        {% for item in krs_list %}
+        <tr>
+            <td>{{ item.kode_kelas }}</td>
+            <td>{{ item.nama_matkul }}</td>
+            <td>{{ item.sks }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}KRS Online{% endblock %} — Sistem Akademik</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="/" class="nav-brand">
+    <span class="brand-icon">🎓</span>
+    <span class="brand-text">KRS&nbsp;Online</span>
+  </a>
+  <div class="nav-links">
+    {% if user %}
+      {% if user.role in ['dosen','admin'] %}
+        <a href="/admin/dashboard">Dashboard</a>
+        <a href="/admin/kelas">Kelola Kelas</a>
+        <a href="/admin/mahasiswa">Mahasiswa</a>
+      {% else %}
+        <a href="/dashboard">Dashboard</a>
+        <a href="/dashboard/kelas">Pilih Kelas</a>
+      {% endif %}
+      <a href="/logout" class="btn-outline">Keluar</a>
+    {% else %}
+      <a href="/login">Masuk</a>
+      <a href="/register" class="btn-primary">Daftar</a>
+    {% endif %}
+  </div>
+</nav>
+
+<main>{% block content %}{% endblock %}</main>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="/" class="nav-brand" style="margin-bottom:0.4rem">
+        <span class="brand-icon">🎓</span>
+        <span class="brand-text">KRS Online</span>
+      </a>
+      <p>Sistem Rencana Studi Online berbasis FastAPI & MySQL.</p>
+    </div>
+    <div class="footer-links">
+      <a href="/">Beranda</a>
+      <a href="/login">Masuk</a>
+      <a href="/register">Daftar</a>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2025 KRS Online. All rights reserved.</div>
+</footer>
+
+<script src="/static/js/main.js"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

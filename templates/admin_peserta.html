@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Peserta — {{ kelas.nama_matkul }}{% endblock %}
+{% block content %}
+
+<div class="admin-layout">
+  <aside class="sidebar">
+    <div class="sidebar-user">
+      <div class="sb-avatar">{{ user.nama_lengkap[:1].upper() }}</div>
+      <div class="sb-info">
+        <div class="sb-name">{{ user.nama_lengkap }}</div>
+        <div class="sb-role">{{ user.role }}</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/admin/dashboard" class="sb-link">🏠 Dashboard</a>
+      <a href="/admin/kelas"     class="sb-link active">📚 Kelola Kelas</a>
+      <a href="/admin/mahasiswa" class="sb-link">👥 Mahasiswa</a>
+      <a href="/logout"          class="sb-link logout">🚪 Keluar</a>
+    </nav>
+  </aside>
+
+  <div class="admin-main">
+    <div style="margin-bottom:1.5rem">
+      <a href="/admin/kelas" style="color:var(--muted);font-size:0.88rem">← Kembali ke Kelas</a>
+    </div>
+
+    <div class="dash-header">
+      <h1><span class="gradient-text">{{ kelas.nama_matkul }}</span></h1>
+      <p>{{ kelas.kode_kelas }} · {{ kelas.hari }}, {{ kelas.jam_mulai }}–{{ kelas.jam_selesai }} · {{ kelas.ruangan or 'Ruangan TBA' }}</p>
+    </div>
+
+    <div class="stats-row" style="margin-bottom:1.5rem">
+      <div class="stat-card"><div class="sc-icon">👥</div><div class="sc-data"><div class="sc-num">{{ peserta|length }}</div><div class="sc-label">Total Peserta</div></div></div>
+      <div class="stat-card"><div class="sc-icon">📊</div><div class="sc-data"><div class="sc-num">{{ kelas.kuota }}</div><div class="sc-label">Kuota</div></div></div>
+      <div class="stat-card"><div class="sc-icon">🔒</div><div class="sc-data"><div class="sc-num">{{ peserta|selectattr('submitted')|list|length }}</div><div class="sc-label">Sudah Submit</div></div></div>
+      <div class="stat-card"><div class="sc-icon">📖</div><div class="sc-data"><div class="sc-num">{{ kelas.sks }}</div><div class="sc-label">SKS</div></div></div>
+    </div>
+
+    <section class="dash-section">
+      <div class="ds-header">
+        <h2>Daftar Peserta ({{ peserta|length }})</h2>
+      </div>
+      {% if peserta %}
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>#</th><th>Nama</th><th>NIM</th><th>Email</th><th>Tgl Pilih</th><th>Status KRS</th></tr></thead>
+          <tbody>
+            {% for p in peserta %}
+            <tr>
+              <td style="color:var(--muted)">{{ loop.index }}</td>
+              <td><strong>{{ p.nama_lengkap }}</strong></td>
+              <td><code style="font-size:0.8rem;color:var(--muted)">{{ p.nim_nip or '—' }}</code></td>
+              <td>{{ p.email }}</td>
+              <td style="color:var(--muted);font-size:0.82rem">{{ p.created_at.strftime('%d %b %Y') if p.created_at else '—' }}</td>
+              <td>
+                <span class="badge {% if p.submitted %}badge-success{% else %}badge-warn{% endif %}">
+                  {% if p.submitted %}🔒 Terkunci{% else %}⏳ Belum Submit{% endif %}
+                </span>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <div class="es-icon">👥</div>
+        <h3>Belum Ada Peserta</h3>
+        <p>Mahasiswa belum memilih kelas ini.</p>
+      </div>
+      {% endif %}
+    </section>
+  </div>
+</div>
+
+{% endblock %}

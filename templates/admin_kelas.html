@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+{% block title %}Kelola Kelas{% endblock %}
+{% block content %}
+
+<div class="admin-layout">
+  <aside class="sidebar">
+    <div class="sidebar-user">
+      <div class="sb-avatar">{{ user.nama_lengkap[:1].upper() }}</div>
+      <div class="sb-info">
+        <div class="sb-name">{{ user.nama_lengkap }}</div>
+        <div class="sb-role">{{ user.role }}</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/admin/dashboard" class="sb-link">🏠 Dashboard</a>
+      <a href="/admin/kelas"     class="sb-link active">📚 Kelola Kelas</a>
+      <a href="/admin/mahasiswa" class="sb-link">👥 Mahasiswa</a>
+      <a href="/logout"          class="sb-link logout">🚪 Keluar</a>
+    </nav>
+  </aside>
+
+  <div class="admin-main">
+    <div class="dash-header">
+      <h1>Kelola <span class="gradient-text">Kelas</span></h1>
+      <p>Tambah, edit, dan hapus jadwal kuliah.</p>
+    </div>
+
+    <div class="ds-header" style="margin-bottom:1.5rem">
+      <h2>Daftar Kelas ({{ kelas_list|length }})</h2>
+      <button class="btn-submit-all" onclick="document.getElementById('modal-tambah').classList.add('open')" style="font-size:0.88rem;padding:0.6rem 1.25rem">+ Tambah Kelas</button>
+    </div>
+
+    {% if kelas_list %}
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead><tr>
+          <th>Kode</th><th>Mata Kuliah</th><th>SKS</th><th>Jadwal</th><th>Ruangan</th>
+          <th>Dosen</th><th>Kuota</th><th>Status</th><th>Aksi</th>
+        </tr></thead>
+        <tbody>
+          {% for k in kelas_list %}
+          <tr>
+            <td><code style="color:var(--indigo2);font-size:0.8rem">{{ k.kode_kelas }}</code></td>
+            <td><strong>{{ k.nama_matkul }}</strong></td>
+            <td><span class="badge badge-muted">{{ k.sks }}</span></td>
+            <td>{{ k.hari }}<br><small style="color:var(--muted)">{{ k.jam_mulai }}–{{ k.jam_selesai }}</small></td>
+            <td>{{ k.ruangan or '—' }}</td>
+            <td>{{ k.dosen.nama_lengkap if k.dosen else '—' }}</td>
+            <td>
+              <span style="font-weight:700">{{ k.terisi }}</span>
+              <span style="color:var(--muted)">/{{ k.kuota }}</span>
+            </td>
+            <td><span class="badge {% if k.is_active %}badge-success{% else %}badge-muted{% endif %}">{{ 'Aktif' if k.is_active else 'Nonaktif' }}</span></td>
+            <td>
+              <div style="display:flex;gap:0.35rem;flex-wrap:wrap">
+                <a href="/admin/kelas/{{ k.id }}/peserta" class="btn-action btn-view">👥</a>
+                <button class="btn-action btn-edit"
+                  onclick="openEdit({{ k.id }},'{{ k.nama_matkul|replace("'","\\'")|e }}','{{ k.deskripsi|replace("'","\\'")|e }}',{{ k.sks }},'{{ k.hari }}','{{ k.jam_mulai }}','{{ k.jam_selesai }}','{{ k.ruangan }}',{{ k.kuota }},'{{ k.semester }}',{{ k.is_active|lower }})">✏️</button>
+                <form method="POST" action="/admin/kelas/{{ k.id }}/delete" style="display:inline"
+                      onsubmit="return confirm('Hapus kelas {{ k.nama_matkul }}? Semua data KRS terkait akan ikut terhapus.')">
+                  <button type="submit" class="btn-action btn-delete">🗑️</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="es-icon">📭</div>
+      <h3>Belum Ada Kelas</h3>
+      <p>Klik tombol di atas untuk menambah kelas pertama.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- MODAL TAMBAH KELAS -->
+<div class="modal-overlay" id="modal-tambah" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>➕ Tambah Kelas Baru</h3>
+      <button class="modal-close" onclick="document.getElementById('modal-tambah').classList.remove('open')">×</button>
+    </div>
+    <form method="POST" action="/admin/kelas/create" class="modal-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Kode Kelas *</label>
+          <input type="text" name="kode_kelas" placeholder="CS101-A" required>
+        </div>
+        <div class="form-group">
+          <label>SKS *</label>
+          <input type="number" name="sks" value="2" min="1" max="6" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Nama Mata Kuliah *</label>
+        <input type="text" name="nama_matkul" placeholder="Algoritma & Pemrograman" required>
+      </div>
+      <div class="form-group">
+        <label>Deskripsi</label>
+        <input type="text" name="deskripsi" placeholder="Deskripsi singkat mata kuliah">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Hari *</label>
+          <select name="hari" required>
+            <option>Senin</option><option>Selasa</option><option>Rabu</option>
+            <option>Kamis</option><option>Jumat</option><option>Sabtu</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Jam Mulai *</label>
+          <input type="time" name="jam_mulai" value="07:00" required>
+        </div>
+        <div class="form-group">
+          <label>Jam Selesai *</label>
+          <input type="time" name="jam_selesai" value="08:40" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Ruangan</label>
+          <input type="text" name="ruangan" placeholder="Gedung A Lt.2">
+        </div>
+        <div class="form-group">
+          <label>Kuota *</label>
+          <input type="number" name="kuota" value="30" min="1" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Semester</label>
+          <input type="text" name="semester" value="Genap 2024/2025">
+        </div>
+        <div class="form-group">
+          <label>Dosen Pengampu</label>
+          <select name="dosen_id">
+            <option value="">— Pilih Dosen —</option>
+            {% for d in dosen_list %}
+            <option value="{{ d.id }}">{{ d.nama_lengkap }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" onclick="document.getElementById('modal-tambah').classList.remove('open')">Batal</button>
+        <button type="submit" class="btn-submit" style="padding:0.65rem 1.5rem;border-radius:var(--radius-sm)">Simpan Kelas</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL EDIT KELAS -->
+<div class="modal-overlay" id="modal-edit" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>✏️ Edit Kelas</h3>
+      <button class="modal-close" onclick="document.getElementById('modal-edit').classList.remove('open')">×</button>
+    </div>
+    <form id="edit-form" method="POST" class="modal-form">
+      <div class="form-group">
+        <label>Nama Mata Kuliah</label>
+        <input type="text" name="nama_matkul" id="edit-nama" required>
+      </div>
+      <div class="form-group">
+        <label>Deskripsi</label>
+        <input type="text" name="deskripsi" id="edit-desc">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>SKS</label>
+          <input type="number" name="sks" id="edit-sks" min="1" max="6" required>
+        </div>
+        <div class="form-group">
+          <label>Hari</label>
+          <select name="hari" id="edit-hari">
+            <option>Senin</option><option>Selasa</option><option>Rabu</option>
+            <option>Kamis</option><option>Jumat</option><option>Sabtu</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Jam Mulai</label><input type="time" name="jam_mulai" id="edit-mulai"></div>
+        <div class="form-group"><label>Jam Selesai</label><input type="time" name="jam_selesai" id="edit-selesai"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Ruangan</label><input type="text" name="ruangan" id="edit-ruangan"></div>
+        <div class="form-group"><label>Kuota</label><input type="number" name="kuota" id="edit-kuota" min="1" required></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Semester</label><input type="text" name="semester" id="edit-semester"></div>
+        <div class="form-group">
+          <label>Status</label>
+          <select name="is_active" id="edit-aktif">
+            <option value="true">Aktif</option>
+            <option value="false">Nonaktif</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" onclick="document.getElementById('modal-edit').classList.remove('open')">Batal</button>
+        <button type="submit" class="btn-submit" style="padding:0.65rem 1.5rem;border-radius:var(--radius-sm)">Simpan Perubahan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function openEdit(id, nama, desc, sks, hari, mulai, selesai, ruangan, kuota, semester, aktif) {
+  document.getElementById('edit-form').action = '/admin/kelas/' + id + '/edit';
+  document.getElementById('edit-nama').value    = nama;
+  document.getElementById('edit-desc').value    = desc;
+  document.getElementById('edit-sks').value     = sks;
+  document.getElementById('edit-hari').value    = hari;
+  document.getElementById('edit-mulai').value   = mulai;
+  document.getElementById('edit-selesai').value = selesai;
+  document.getElementById('edit-ruangan').value = ruangan;
+  document.getElementById('edit-kuota').value   = kuota;
+  document.getElementById('edit-semester').value= semester;
+  document.getElementById('edit-aktif').value   = aktif ? 'true' : 'false';
+  document.getElementById('modal-edit').classList.add('open');
+}
+</script>
+{% endblock %}

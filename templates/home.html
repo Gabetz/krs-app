@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Beranda{% endblock %}
+{% block content %}
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-badge">🎓 Sistem KRS Resmi Kampus</div>
+    <h1 class="hero-title">Kelola Rencana Studi<br><span class="gradient-text">Lebih Mudah & Cepat</span></h1>
+    <p class="hero-desc">
+      Pilih kelas, atur jadwal, dan lakukan submit KRS secara real-time.
+      Dosen dapat mengelola mata kuliah dan memantau kuota langsung dari dashboard.
+    </p>
+    <div class="hero-actions">
+      <a href="/register" class="btn-hero-primary">Mulai Sekarang</a>
+      <a href="/login" class="btn-hero-secondary">Sudah punya akun? →</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-num">{{ total_kelas }}</span>
+        <span class="stat-label">Kelas Tersedia</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-num">{{ total_mhs }}</span>
+        <span class="stat-label">Mahasiswa Terdaftar</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-num">Real-Time</span>
+        <span class="stat-label">Update Kuota</span>
+      </div>
+    </div>
+  </div>
+ <div class="hero-visual">
+
+</section>
+
+<!-- FITUR UTAMA -->
+<section class="section-features" style="padding: 5rem 0;">
+  <div class="container">
+    <div class="section-header centered">
+      <h2>Fitur Utama Sistem</h2>
+      <p>Dirancang untuk memudahkan proses akademik kampus secara menyeluruh</p>
+    </div>
+    <div class="features-grid">
+      <div class="feat-card">
+        <div class="feat-icon">🔐</div>
+        <h3>Autentikasi Multi-Role</h3>
+        <p>Sistem login terpisah untuk Dosen (Admin) dan Mahasiswa dengan hak akses yang berbeda-beda.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📚</div>
+        <h3>Manajemen Kelas (Dosen)</h3>
+        <p>Dosen dapat menambah, mengedit, dan menghapus jadwal kuliah beserta kuota peserta.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📝</div>
+        <h3>Pemilihan KRS Real-Time</h3>
+        <p>Mahasiswa memilih beberapa kelas sekaligus. Kuota berkurang otomatis dan langsung terlihat.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔒</div>
+        <h3>Submit Massal & Kunci</h3>
+        <p>Satu klik untuk mengunci semua pilihan KRS. Kelas yang sudah dikunci tidak dapat diubah.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section-cta">
+  <div class="cta-inner">
+    <h2>Siap Mengisi KRS Semester Ini?</h2>
+    <p>Daftarkan akunmu dan mulai pilih kelas dalam hitungan menit.</p>
+    <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+      <a href="/register?role=mahasiswa" class="btn-hero-primary">Daftar sebagai Mahasiswa</a>
+      <a href="/register?role=dosen" class="btn-hero-secondary">Masuk sebagai Dosen</a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

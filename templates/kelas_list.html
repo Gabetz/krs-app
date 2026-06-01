@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Pilih Kelas{% endblock %}
+{% block content %}
+
+<div class="dashboard-page">
+  <aside class="sidebar">
+    <div class="sidebar-user">
+      <div class="sb-avatar">{{ user.nama_lengkap[:1].upper() }}</div>
+      <div class="sb-info">
+        <div class="sb-name">{{ user.nama_lengkap }}</div>
+        <div class="sb-role">{{ user.nim_nip or 'Mahasiswa' }}</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/dashboard"       class="sb-link">🏠 Dashboard</a>
+      <a href="/dashboard/kelas" class="sb-link active">📚 Pilih Kelas</a>
+      <a href="/logout"          class="sb-link logout">🚪 Keluar</a>
+    </nav>
+  </aside>
+
+  <div class="dashboard-main">
+    <div class="dash-header">
+      <h1>Pilih <span class="gradient-text">Kelas KRS</span></h1>
+      <p>Klik kelas untuk menambah atau membatalkan pilihan. Submit di dashboard setelah selesai.</p>
+    </div>
+
+    <!-- summary bar -->
+    <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+      <div class="total-sks">Dipilih: <span class="sks-num">{{ dipilih_ids|length }}</span> kelas</div>
+      <a href="/dashboard" class="ds-action">← Kembali ke Dashboard</a>
+    </div>
+
+    {% if semua_kelas %}
+    <div class="kelas-grid">
+      {% for k in semua_kelas %}
+      {% set is_dipilih = k.id in dipilih_ids %}
+      {% set pct = ((k.terisi / k.kuota) * 100)|int if k.kuota > 0 else 100 %}
+      <div class="kelas-card {% if is_dipilih %}dipilih{% elif k.sisa_kuota == 0 %}penuh{% endif %}">
+        <div class="kc-header">
+          <span class="kc-kode">{{ k.kode_kelas }}</span>
+          <span class="kc-sks">{{ k.sks }} SKS</span>
+        </div>
+        <div class="kc-title">{{ k.nama_matkul }}</div>
+        <div class="kc-dosen">🧑‍🏫 {{ k.dosen.nama_lengkap if k.dosen else 'TBA' }}</div>
+        <div class="kc-jadwal">📅 {{ k.hari }}, {{ k.jam_mulai }}–{{ k.jam_selesai }}</div>
+        {% if k.ruangan %}<div class="kc-ruangan">🚪 {{ k.ruangan }}</div>{% endif %}
+
+        <div class="kc-quota-bar">
+          <div class="kq-label">
+            <span>Kuota</span>
+            <span>{{ k.terisi }}/{{ k.kuota }}</span>
+          </div>
+          <div class="kq-track">
+            <div class="kq-fill {% if pct >= 100 %}full{% elif pct >= 80 %}almost-full{% endif %}"
+                 style="width:{{ [pct, 100]|min }}%"></div>
+          </div>
+        </div>
+
+        {% if k.sisa_kuota == 0 and not is_dipilih %}
+          <button class="btn-pilih" disabled style="opacity:.5;cursor:not-allowed">Penuh</button>
+        {% else %}
+          <form method="POST" action="/dashboard/kelas/{{ k.id }}/pilih">
+            <button type="submit" class="btn-pilih {% if is_dipilih %}batal{% endif %}">
+              {% if is_dipilih %}✕ Batalkan Pilihan{% else %}+ Tambah ke KRS{% endif %}
+            </button>
+          </form>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="es-icon">📭</div>
+      <h3>Belum Ada Kelas Tersedia</h3>
+      <p>Dosen belum menambahkan jadwal kelas. Silakan cek kembali nanti.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

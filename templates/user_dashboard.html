@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}Dashboard Mahasiswa{% endblock %}
+{% block content %}
+
+<div class="dashboard-page">
+  <aside class="sidebar">
+    <div class="sidebar-user">
+      <div class="sb-avatar">{{ user.nama_lengkap[:1].upper() }}</div>
+      <div class="sb-info">
+        <div class="sb-name">{{ user.nama_lengkap }}</div>
+        <div class="sb-role">{{ user.nim_nip or 'Mahasiswa' }}</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/dashboard" class="sb-link active">🏠 Dashboard</a>
+      <a href="/dashboard/kelas" class="sb-link">📚 Pilih Kelas</a>
+      <a href="/logout" class="sb-link logout">🚪 Keluar</a>
+    </nav>
+  </aside>
+
+  <div class="dashboard-main">
+    <div class="dash-header">
+      <h1>Halo, <span class="gradient-text">{{ user.nama_lengkap.split()[0] }}</span>! 👋</h1>
+      <p>Semester Genap 2024/2025 — Masa pengisian KRS aktif.</p>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="sc-icon">📋</div>
+        <div class="sc-data">
+          <div class="sc-num">{{ kelas_dipilih|length }}</div>
+          <div class="sc-label">Kelas Dipilih</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-icon">📖</div>
+        <div class="sc-data">
+          <div class="sc-num">{{ total_sks }}</div>
+          <div class="sc-label">Total SKS</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-icon">🔒</div>
+        <div class="sc-data">
+          <div class="sc-num">{{ submitted_ids|length }}</div>
+          <div class="sc-label">Kelas Dikunci</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-icon">{% if all_submitted %}✅{% else %}⏳{% endif %}</div>
+        <div class="sc-data">
+          <div class="sc-num" style="font-size:1rem">{% if all_submitted %}Selesai{% else %}Proses{% endif %}</div>
+          <div class="sc-label">Status KRS</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-white">Rencana Studi Saya</h2>
+    <div class="d-flex gap-2">
+       <a href="/cetak-krs" 
+   class="btn btn-danger" 
+   style="background-color: #8a0606; border-color: #920606; color: white; font-weight: bold; padding: 3px 3px; text-decoration: none; border-radius: 5px;">
+    Cetak PDF
+</a>
+        <div class="badge bg-dark border border-secondary text-white p-2">Total: 22 SKS</div>
+        <div class="badge bg-success text-white p-2">✅ KRS TERKUNCI</div>
+    </div>
+</div>
+
+      {% if kelas_dipilih %}
+      <div class="krs-table-wrap">
+        <table class="krs-table">
+          <thead>
+            <tr>
+              <th>Kode</th>
+              <th>Mata Kuliah</th>
+              <th>SKS</th>
+              <th>Jadwal</th>
+              <th>Dosen</th>
+              <th>Ruangan</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for k in kelas_dipilih %}
+            <tr>
+              <td><code style="color:var(--indigo2);font-size:0.8rem">{{ k.kode_kelas }}</code></td>
+              <td><strong>{{ k.nama_matkul }}</strong></td>
+              <td><span class="badge badge-muted">{{ k.sks }} SKS</span></td>
+              <td>{{ k.hari }}, {{ k.jam_mulai }}–{{ k.jam_selesai }}</td>
+              <td>{{ k.dosen.nama_lengkap if k.dosen else '—' }}</td>
+              <td>{{ k.ruangan or '—' }}</td>
+              <td>
+                {% if k.id in submitted_ids %}
+                  <span class="badge badge-success">🔒 Terkunci</span>
+                {% else %}
+                  <span class="badge badge-warn">⏳ Belum Submit</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <div class="es-icon">📋</div>
+        <h3>Belum Ada Kelas Dipilih</h3>
+        <p>Tambahkan kelas ke KRS kamu untuk semester ini.</p>
+        <a href="/dashboard/kelas" class="btn-hero-primary" style="display:inline-block;margin-top:0.5rem">Pilih Kelas Sekarang</a>
+      </div>
+      {% endif %}
+    </section>
+
+    {% if not all_submitted and kelas_dipilih %}
+    <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);border-radius:var(--radius);padding:1rem 1.25rem;font-size:0.88rem;color:var(--warn);display:flex;gap:0.75rem;align-items:flex-start;">
+      <span style="font-size:1.2rem">⚠️</span>
+      <div>
+        <strong>KRS belum dikunci!</strong> Klik tombol <em>Submit &amp; Kunci KRS</em> di atas untuk mengunci pilihan Anda.
+        Setelah dikunci, pilihan tidak dapat diubah.
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

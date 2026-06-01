@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Masuk{% endblock %}
+{% block content %}
+
+<div class="auth-page">
+  <div class="auth-visual">
+    <div class="auth-visual-content">
+      <div class="av-badge">🎓 KRS Online</div>
+      <h2>Selamat Datang Kembali!</h2>
+      <p>Masuk untuk melanjutkan pengisian KRS atau mengelola kelas Anda.</p>
+      <div class="av-features">
+        <div class="av-feat"><span>✓</span> Dashboard mahasiswa & dosen</div>
+        <div class="av-feat"><span>✓</span> Pilih kelas real-time</div>
+        <div class="av-feat"><span>✓</span> Submit KRS sekali klik</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-form-wrap">
+    <div class="auth-form-box">
+      <h1 class="auth-title">Masuk ke Akun</h1>
+      <p class="auth-sub">Belum terdaftar? <a href="/register">Buat akun baru</a></p>
+
+      {% if error %}
+      <div class="alert alert-error" style="margin-bottom:1rem">⚠ {{ error }}</div>
+      {% endif %}
+
+      <form method="POST" action="/login" class="auth-form">
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" name="username" placeholder="Masukkan username" required autofocus>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <div class="input-with-toggle">
+            <input type="password" id="pass" name="password" placeholder="Masukkan password" required>
+            <button type="button" class="toggle-pass" onclick="document.getElementById('pass').type=document.getElementById('pass').type==='password'?'text':'password'">👁</button>
+          </div>
+        </div>
+        <button type="submit" class="btn-submit">Masuk →</button>
+      </form>
+
+      <div class="auth-demo">
+        <p>Akun demo:</p>
+        <div class="demo-accounts">
+          <button onclick="document.querySelector('[name=username]').value='admin';document.getElementById('pass').value='admin123'">👑 Dosen/Admin</button>
+          <button onclick="document.querySelector('[name=username]').value='mahasiswa1';document.getElementById('pass').value='mhs123'">👤 Mahasiswa</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

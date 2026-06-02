@@ -46,6 +46,7 @@ class Kelas(Base):
     jam_selesai = Column(String(10),  nullable=True)
     ruangan     = Column(String(50),  nullable=True)
     semester    = Column(String(50),  nullable=True)
+    deskripsi   = Column(String(255), nullable=True)
     
     is_active   = Column(Boolean,     default=True)
     created_at  = Column(DateTime,    default=func.now())

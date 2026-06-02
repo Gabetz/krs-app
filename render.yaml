@@ -1,9 +1,0 @@
-services:
-  - type: web
-    name: krs-app
-    env: python
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "uvicorn main:app --host 0.0.0.0 --port $PORT"
-    envVars:
-      - key: DATABASE_URL
-        fromDatabase: false # Anda akan mengisi ini di dashboard nanti

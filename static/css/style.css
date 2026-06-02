@@ -1355,3 +1355,37 @@ main { flex: 1; position: relative; z-index: 1; }
     color: #9ca3af;
     border: 1px solid rgba(156, 163, 175, 0.2);
 }
+
+/* Pastikan seluruh layar tidak meluap */
+html, body {
+    overflow-x: hidden;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Memastikan tabel bisa di-scroll di HP jika terlalu lebar */
+.table-container {
+    overflow-x: auto;
+    width: 100%;
+}
+
+/* Pastikan semua gambar atau elemen tidak lebih lebar dari layar */
+img, table, div {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Penyesuaian khusus untuk HP agar tidak terlalu rapat */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        padding: 10px;
+    }
+    
+    .nav-links {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+}

@@ -55,16 +55,21 @@
       </div>
     </div>
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="text-white">Rencana Studi Saya</h2>
     <div class="d-flex gap-2">
-       <a href="/cetak-krs" 
-   class="btn btn-danger" 
-   style="background-color: #8a0606; border-color: #920606; color: white; font-weight: bold; padding: 3px 3px; text-decoration: none; border-radius: 5px;">
-    Cetak PDF
-</a>
-        <div class="badge bg-dark border border-secondary text-white p-2">Total: 22 SKS</div>
-        <div class="badge bg-success text-white p-2">✅ KRS TERKUNCI</div>
+        
+        {% if all_submitted %}
+            <a href="/cetak-krs" class="btn btn-danger" style="">Cetak PDF</a>
+            <div class="badge bg-success text-white p-2">✅ KRS TERKUNCI</div>
+        {% else %}
+            <a href="/dashboard/kelas/submit-all" class="btn btn-warning" onclick="return confirm('Yakin ingin mengunci KRS?')">
+                🔒 Submit & Kunci KRS
+            </a>
+            <div class="badge bg-warning text-dark p-2">⏳ PROSES ISI KRS</div>
+        {% endif %}
+
+        <div class="badge bg-dark border border-secondary text-white p-2">Total: {{ total_sks }} SKS</div>
     </div>
 </div>
 

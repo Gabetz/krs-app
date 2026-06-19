@@ -108,6 +108,9 @@ async def submit_all(request: Request, db: Session = Depends(get_db)):
     if not user:
         return RedirectResponse("/login", status_code=302)
 
+    # Tambahkan pengecekan: Jika sudah ada yang 'submitted=TRUE', 
+    # mungkin Anda ingin memberikan pesan bahwa KRS sudah terkunci.
+    
     db.execute(
         text("UPDATE krs SET submitted=TRUE WHERE mahasiswa_id=:uid AND submitted=FALSE"),
         {"uid": user.id}
